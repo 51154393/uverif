@@ -1,0 +1,152 @@
+div::-webkit-scrollbar {/*滚动条整体样式*/
+    width: 4px;     /*高宽分别对应横竖滚动条的尺寸*/
+    height: 1px;
+}
+
+aside::-webkit-scrollbar {
+  width: 0px; 
+}
+
+::-webkit-scrollbar {
+  width: 4px; 
+  height: 1px;
+}
+::-webkit-scrollbar-thumb {
+  border-radius: 0px;
+  box-shadow: inset 0 0 5px rgba(97, 184, 179, 0.1);
+  background: #b4b5c3;
+}
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px rgba(87, 175, 187, 0.1);
+  border-radius: 0px;
+  background: #f9fbfd;
+}
+
+.spinner-ui{display: inline-block;animation:spinner-border .75s linear infinite;}
+.app-logo-add {border: 1px dashed #cacaca;padding: 10px;}
+.app-logo-add.show {border: 1px dashed #cacaca;padding: 0px;}
+.app-logo-state.off{filter:grayscale(100%);}
+
+.avatar-hb{filter:grayscale(100%);}/* 黑白图片 */
+
+td{
+	word-break:keep-all;     /* 不换行 */
+	white-space:nowrap;      /* 不换行 */
+	overflow:hidden;         /* 内容超出宽度时隐藏超出部分的内容 */
+	text-overflow:ellipsis;  /* 当对象内文本溢出时显示省略标记(...)；需与overflow:hidden;一起使用。*/
+	text-align:center;
+}
+tr{
+	word-break:keep-all;     /* 不换行 */
+	white-space:nowrap;      /* 不换行 */
+	overflow:hidden;         /* 内容超出宽度时隐藏超出部分的内容 */
+	text-overflow:ellipsis;  /* 当对象内文本溢出时显示省略标记(...)；需与overflow:hidden;一起使用。*/
+	text-align:center;
+}
+.table-responsive::-webkit-scrollbar{   /*滚动条基本样式，高度*/
+	width:0px;height:8px;
+}
+.table-responsive::-webkit-scrollbar-thumb {/*滚动条上层颜色*/
+	border-radius: 0px;
+	-webkit-box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+	background: rgb(133 141 137);
+}
+.table-responsive::-webkit-scrollbar-track {/*滚动条底层颜色*/
+	-webkit-box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+	border-radius: 0;
+	background: rgb(238 242 247);
+}
+.table-overflow{
+	overflow-x:auto;
+}
+.table-overflow{
+	overflow-x:auto;
+}
+.input-group.so input{
+	background: url('/assets/images/so.svg') no-repeat;
+	background-position: 5px 7px;
+	padding-left: 30px;
+	background-size:20px;
+}
+.text-left{
+	text-align:left;
+}
+.pic{
+	width:40px;
+	background-image:url('/assets/avatars/default.svg');
+}
+input[data-switch=primary]:checked+label{
+	background-color:#727cf5;
+}
+input[data-switch=bool]+label{
+	background-color:#fa5c7c;
+}
+.wd-20{width: 20px!important;}.wd-100{width: 100px!important;}.wd-200{width: 200px!important;}
+.custom-control-input.success:checked~.custom-control-label::before{
+	color:#fff;border-color:#0acf97;background-color:#0acf97;
+}
+
+.custom-switch .custom-control-label.success::after{
+	background-color:#fff;
+}
+.custom-control-label.success::before{
+	background-color:#f82f58;border:#f82f58 solid 1px;
+}
+.ali-icon {
+  background: url('/assets/images/alipay.png') no-repeat center;
+  background-color: transparent;
+  background-size: 20px 20px;
+  margin-bottom:2px;
+  height: 16px;
+  width: 16px;
+  display: inline-block;
+  vertical-align:middle
+}
+.wx-icon {
+  background: url('/assets/images/wxpay.png') no-repeat center;
+  background-color: transparent;
+  background-size: 20px 20px;
+  margin-bottom:2px;
+  height: 16px;
+  width: 16px;
+  display: inline-block;
+  vertical-align:middle
+}
+
+.badge-ali-lighten{font-weight:700!important;color:#1678ff;background-color:rgb(22 120 255 / 24%);}
+.badge-wx-lighten{font-weight:700!important;color:#0fca8b;background-color:#3ad29f4d;}
+.Tables-info{
+	padding-top: 0.56em;
+	white-space: nowrap;
+}
+@media screen and (max-width: 767px) {
+  div.Tables-info {
+    text-align: center;
+	margin-bottom:0.56em;
+  }
+  ul.pagination {
+    justify-content: center !important;
+  }
+}
+.mt-2px{
+	margin-top: 2px;
+}
+
+.cursor-default{
+	cursor:default;/*默认指针*/
+}
+
+.cursor-pointer{
+	cursor:pointer;/*默认小手*/
+}
+.min-vh-message{min-height:60vh!important}
+@media(min-width:768px){.min-vh-message{min-height:70vh!important}}@media(min-width:1200px){.min-vh-message{min-height:80vh!important}}
+.badge-primary-lighten{color:#727cf5;background-color:rgba(114,124,245,.18)}
+.badge-secondary-lighten{color:#6c757d;background-color:rgba(108,117,125,.18)}
+.badge-success-lighten{color:#0acf97;background-color:rgba(10,207,151,.18)}
+.badge-info-lighten{color:#39afd1;background-color:rgba(57,175,209,.18)}
+.badge-warning-lighten{color:#ffbc00;background-color:rgba(255,188,0,.18)}
+.badge-danger-lighten{color:#fa5c7c;background-color:rgba(250,92,124,.18)}
+.badge-light-lighten{color:#eef2f7;background-color:rgba(238,242,247,.18)}
+.badge-dark-lighten{color:#313a46;background-color:rgba(49,58,70,.18)}
+.img-container img{height: 100px;width: 100px;object-fit: cover;border: 1px dashed #cacaca;padding: 5px;}
