@@ -1,3 +1,4 @@
+<?php if(!defined('U_VER')){exit;}?>
 <!doctype html>
 <html lang="zh-CN">
 	<head>
