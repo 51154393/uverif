@@ -924,7 +924,10 @@ class apiController extends Ue{
 			}
 		}
 		if(count($app_exten) > 0){
-			$data = array_merge($data,['exten'=>$exten,'notice'=>$notice_res]);
+			$data = array_merge($data,['exten'=>$exten]);
+		}
+        	if(count($notice_res) > 0){
+			$data = array_merge($data,['notice'=>$notice_res]);
 		}
 		$this->out->setData($data)->e(200);
 	}
