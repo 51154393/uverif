@@ -136,7 +136,7 @@ class Rsa{
      * @param $string
      * @return mixed|string
      */
-    public static function urlSafeBase64encode($string,$replace = false){
+    public static function urlSafeBase64encode($string,$replace = true){
 		if($replace){
 			$data = str_replace(array('+','/','='), array( '-','_',''), base64_encode($string));
 		}else{
@@ -150,7 +150,7 @@ class Rsa{
      * @param $string
      * @return bool|string
      */
-    public static function urlSafeBase64decode($string,$replace = false){
+    public static function urlSafeBase64decode($string,$replace = true){
 		if($replace){
 			$data = str_replace(array('-','_'), array('+','/'), $string);
 			$mod4 = strlen($data) % 4;
