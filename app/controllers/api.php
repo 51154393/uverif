@@ -409,7 +409,7 @@ class apiController extends Ue{
 		if($Ures['password'] != md5($_POST['password']))$this->out->e(132);
 		if(md5($_POST['newPassword']) == md5($_POST['password']))$this->out->e(133);
 		
-		$upRes = $this->db->where('id = ? and appid = ?',[$Ures['id'],$this->app['id']])->update(['password'=>md5($_POST['password'])]);
+		$upRes = $this->db->where('id = ? and appid = ?',[$Ures['id'],$this->app['id']])->update(['password'=>md5($_POST['newPassword'])]);
 		if(!$upRes){
 			$this->__log($Ures['id'],$this->m,201);
 			$this->out->e(201,'修改失败');
@@ -965,7 +965,7 @@ class apiController extends Ue{
 		$Ures = $this->db->join("as U LEFT JOIN {$this->db->pre}agent as A on (U.id = A.uid)")->where('U.id = ?',[$this->Token->param['uid']])->fetch('U.*,IF(A.id IS NOT NULL,true,false) AS agent');
 		if(!$Ures)$this->out->e(129);
 		if($Ures['ban'] > time())$this->out->e(127,$Ures['ban_notice']);//账号被禁用
-		if(md5($Ures['password']) != $this->Token->param['p'])$this->out->e(134);
+		if(md5($Ures['password']) != $this->Token->param['p'])$this->out->e(131);
 		
 		
 		$client_Arr = json_decode($Ures['client_list'],true);
