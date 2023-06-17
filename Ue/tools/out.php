@@ -50,7 +50,7 @@ class out {
                     }elseif($this->ver['mi_type'] == 'aes' && strlen($keyConfig['key']) == 32 && strlen($keyConfig['iv']) == 16 && $this->encryption){//AES加密密钥长度必须是16个字符
                     	$Aes = t('Aes',$keyConfig['key'],$keyConfig['iv']);
                     	$data['data'] = $Aes->encode($data['data']);//加密
-                    }elseif($this->ver['mi_type'] == 'rsa' && !isset($keyConfig['private']) && $this->encryption){
+                    }elseif($this->ver['mi_type'] == 'rsa' && isset($keyConfig['private']) && $this->encryption){
                     	$Rsa = t('Rsa');
                     	$data['data'] = $Rsa->privateEncrypt($data['data'],$keyConfig['private']);
                     }
@@ -77,7 +77,7 @@ class out {
                     }elseif($this->ver['mi_type'] == 'aes' && strlen($keyConfig['key']) == 32 && strlen($keyConfig['iv']) == 16 && $this->encryption){//AES加密密钥长度必须是16个字符
                     	$Aes = t('Aes',$keyConfig['key'],$keyConfig['iv']);
                     	$data['data'] = $Aes->encode($data['data']);//加密
-                    }elseif($this->ver['mi_type'] == 'rsa' && !isset($keyConfig['private']) && $this->encryption){
+                    }elseif($this->ver['mi_type'] == 'rsa' && isset($keyConfig['private']) && $this->encryption){
                     	$Rsa = t('Rsa');
                     	$data['data'] = $Rsa->privateEncrypt($data['data'],$keyConfig['private']);
                     }
