@@ -15,7 +15,7 @@ class adminController extends Ue{
 		startSession();
 		if(!defined('U_ADMIN')){
 			if(md5($this->ip.$this->admConf['ADM_KEY']) != getSession('admSession')){
-				$this->errorInfo = ['code'=>500,'msg'=>'管理后台已关闭，请使用后台入口访问进入:'.getSession('admSession')];
+				$this->errorInfo = ['code'=>500,'msg'=>'管理后台已关闭，请使用后台入口访问进入'];
 				$this->display('404.php');
 			}
 			define('U_ADMIN',TRUE);
@@ -1100,13 +1100,13 @@ class adminController extends Ue{
 				'reg_state' => ['sameone','on,off','注册控制状态有误'],
 				'logon_state' => ['sameone','on,off','登录控制状态有误'],
 				'reg_way' => ['sameone','phone,email,wordnum','注册方式有误'],
-				'reg_time_mc' => ['Int','1,10','应用版本号应在1~999区间'],
-				'reg_time_ip' => ['Int','1,10','应用版本号应在1~999区间'],
+				'reg_time_mc' => ['Int','1,10','应用版本号应在1~999区间',0],
+				'reg_time_ip' => ['Int','1,10','应用版本号应在1~999区间',0],
 				'reg_off_msg' => ['string','2,255','关闭注册提示内容不规范',true],
 				
 				'logon_mc_num' => ['Int','1,2','登录设备数设置有误'],
 				'logon_mc_unbdeType' => ['sameone','vip,fen','解绑扣费类型有误'],
-				'logon_mc_unbdeVal' => ['Int','1,10','解绑扣费值有误'],
+				'logon_mc_unbdeVal' => ['Int','1,10','解绑扣费值有误',0],
 				'logon_off_msg' => ['string','2,255','关闭登录提示内容不规范',true],
 			];
 			
