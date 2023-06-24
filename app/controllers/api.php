@@ -532,7 +532,7 @@ class apiController extends Ue{
 			$this->out->e(201,"设置失败");
 		}
 		$this->__log($Ures['id'],$this->m);
-		$this->out->e(201,"设置成功");
+		$this->out->e(200,"设置成功");
 	}
 	
 	public function __setEmail(){//设置邮箱
@@ -562,7 +562,7 @@ class apiController extends Ue{
 			$this->out->e(201,"绑定失败");
 		}
 		$this->__log($Ures['id'],$this->m);
-		$this->out->e(201,"绑定成功");
+		$this->out->e(200,"绑定成功");
 	}
 	
 	public function __setPhone(){//设置手机号
@@ -592,7 +592,7 @@ class apiController extends Ue{
 			$this->out->e(201,"绑定失败");
 		}
 		$this->__log($Ures['id'],$this->m);
-		$this->out->e(201,"绑定成功");
+		$this->out->e(200,"绑定成功");
 	}
 	
 	public function __getUdid(){//获取已绑定设备列表
@@ -647,7 +647,7 @@ class apiController extends Ue{
 			$this->out->e(201,"解绑失败");
 		}
 		$this->__log($Ures['id'],$this->m);
-		$this->out->e(201,"解绑成功");
+		$this->out->e(200,"解绑成功");
 	}
 	
 	public function __bindUdid(){//绑定设备
@@ -674,7 +674,7 @@ class apiController extends Ue{
 			$this->out->e(201,"绑定失败");
 		}
 		$this->__log($Ures['id'],$this->m);
-		$this->out->e(201,"绑定成功");
+		$this->out->e(200,"绑定成功");
 	}
 	
 	public function __subordinate(){//下级列表
@@ -926,7 +926,7 @@ class apiController extends Ue{
 		if(count($app_exten) > 0){
 			$data = array_merge($data,['exten'=>$exten]);
 		}
-        	if(!empty($notice_res)){
+        if(!empty($notice_res)){
 			$data = array_merge($data,['notice'=>$notice_res]);
 		}
 		$this->out->setData($data)->e(200);
@@ -967,7 +967,7 @@ class apiController extends Ue{
 		
 		$Ures = $this->db->join("as U LEFT JOIN {$this->db->pre}agent as A on (U.id = A.uid)")->where('U.id = ?',[$this->Token->param['uid']])->fetch('U.*,IF(A.id IS NOT NULL,true,false) AS agent');
 		if(!$Ures)$this->out->e(129);
-		if($Ures['ban'] > time())$this->out->e(127,$Ures['ban_notice']);//账号被禁用
+		if($Ures['ban'] > time())$this->out->e(127,$Ures['ban_msg']);//账号被禁用
 		if(md5($Ures['password']) != $this->Token->param['p'])$this->out->e(131);
 		
 		
