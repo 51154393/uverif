@@ -16,7 +16,7 @@ class uper{
 	//目标文件夹
 	private $targetDir;
 	//允许上传文件的类型， 格式如下：
-	public $allowType     = 'image/png,image/jpeg,image/pjpeg,image/x-png,image/gif';
+	public $allowType     = 'image/png,image/jpeg,image/pjpeg,image/x-png,image/gif,application/octet-stream';
 	//允许上传文件的扩展名
 	public $allowExeName  = 'jpg,gif,png';
 	//允许上传文件的大小 [单位 K]
