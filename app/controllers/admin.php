@@ -16,7 +16,7 @@ class adminController extends Ue{
 		if(!defined('U_ADMIN')){
 			if(md5($this->ip.$this->admConf['ADM_KEY']) != getSession('admSession')){
 				$this->errorInfo = ['code'=>500,'msg'=>'管理后台已关闭，请使用后台入口访问进入'];
-				$this->display('404.php');
+				$this->display('404.php',true);
 			}
 			define('U_ADMIN',TRUE);
 		}else{
