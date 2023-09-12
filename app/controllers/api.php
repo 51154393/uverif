@@ -697,6 +697,211 @@ class apiController extends Ue{
 		
 		$this->out->setData($list)->e(200,'获取成功');
 	}
+
+	public function __agentInfo(){//代理获取信息
+        $checkRules  = [
+			'token' => ['Jwt','','Token令牌有误']
+		];
+		$dataChecker = t('dataChecker',$_POST, $checkRules);
+		$res = $dataChecker->check();
+		if(!$res)$this->out->e(201,$dataChecker->error);
+		
+		$Ures = $this->__TokenCheck();
+		
+		if(!$Ures['agent'])$this->out->e(181);
+		$AGres = db('agent')->join("as AG LEFT JOIN {$this->db->pre}agent_group as AGG on (AG.aggid = AGG.id)")->where('AG.uid = ? and AG.appid = ?',[$Ures['id'],$this->app['id']])->fetch('AG.*,AGG.name');
+		if(!$AGres)$this->out->e(201,'代理信息不存在');
+		$this->out->setData($AGres)->e(200,'获取成功');
+	}
+
+	public function __agentGetkamigroup(){//代理获取卡密组列表
+		$checkRules  = [
+			'token' => ['Jwt','','Token令牌有误'],
+			'pg' => ['int','1,11','页面有误',1]
+		];
+		$dataChecker = t('dataChecker',$_POST, $checkRules);
+		$res = $dataChecker->check();
+		if(!$res)$this->out->e(201,$dataChecker->error);
+
+		$Ures = $this->__TokenCheck();
+		
+		if(!$Ures['agent'])$this->out->e(181);
+
+		$AGdb = db('agent');
+		$AGres = $AGdb->where('uid = ? and appid = ?',[$Ures['id'],$this->app['id']])->fetch();
+		if(!$AGres)$this->out->e(201,'代理信息不存在');
+		if($AGres['state'] != 'on')$this->out->e(180);
+
+		$page = isset($_POST['pg']) ? (intval($_POST['pg']) >= 1 ? intval($_POST['pg']):1) : 1;
+		
+		$list = db('kami_group')->page($page,10)->fetchAll("id,name,type,price");
+		$this->out->setData($list)->e(200,'获取成功');
+	}
+
+	public function __agentAddKaika(){//代理开卡
+        $checkRules  = [
+			'token' => ['Jwt','','Token令牌有误'],
+			'kgid' => ['int','1,11','卡密组有误'],
+			'num' => ['betweend','1,10000','卡密生成数量有误，一次最多生成1W张'],
+			'note' => ['String','1,64','卡密备注不规范'],
+			'pre' => ['Kami','1,10','卡密前缀不规范：1~10位字符']
+		];
+		$dataChecker = t('dataChecker',$_POST, $checkRules);
+		$res = $dataChecker->check();
+		if(!$res)$this->out->e(201,$dataChecker->error);
+		
+		$Ures = $this->__TokenCheck();
+		
+		if(!$Ures['agent'])$this->out->e(181);
+
+		$AGdb = db('agent');
+		$AGres = $AGdb->where('uid = ? and appid = ?',[$Ures['id'],$this->app['id']])->fetch();
+		if(!$AGres)$this->out->e(201,'代理信息不存在');
+		if($AGres['state'] != 'on')$this->out->e(180);
+
+		$KGres = db('kami_group')->where('id = ? and appid = ?',[$_POST['kgid'],$this->app['id']])->fetch();
+		if(!$KGres)$this->out->e(201,'创建卡密组不存在');
+
+		$originalPrice = $KGres['price']*$_POST['num'];//计费
+		$discountedPrice = $originalPrice*($AGres['km_discount']/10);
+
+		if($AGres['money']<$discountedPrice)$this->out->e(182);
+		$AGdb->beginTransaction();//开启事务
+		$deductRes = $AGdb->where('id = ?', [$AGres['id']])->field(['money'=>-$discountedPrice]);//扣除余额
+		if(!$deductRes)$this->out->e(201,'开卡失败，请重试');
+
+		$dbkey = 'kgid,cardNo,type,val,note,add_uid,add_time,add_ip,appid';
+		$addData = [];
+		$note = empty($_POST['note'])?NULL:$_POST['note'];
+		for($i=1;$i<=$_POST['num'];$i++){
+			$kami = $_POST['pre'].strtoupper(str_shuffle(uniqid()).getcode(4));
+			$data = [$_POST['kgid'],$kami,$KGres['type'],$KGres['val'],$note,$Ures['id'],time(),$this->ip,$this->app['id']];
+			$addData[] = $data;
+		}
+		$db = db('kami');
+		$addRes = $db->addbatch($dbkey,$addData);
+		$snum = $db->rowCount();
+		if($addRes && $snum >=1){
+			$this->__log($Ures['id'],$this->m);
+			$AGdb->commit();//进行提交
+			$this->out->e(200,"卡密创建成功，本次添加：{$snum}条卡密，失败：".($_POST['num']-$snum).'条，计费：'.$discountedPrice.'元');
+		}else{
+			$AGdb->rollback();//回滚
+			$this->__log($Ures['id'],$this->m,201);
+			$this->out->e(201,"卡密创建失败");
+		}
+	}
+
+	public function __agentGetkami(){//代理获取卡密列表
+		$checkRules  = [
+			'token' => ['Jwt','','Token令牌有误'],
+			'pg' => ['int','1,11','页面有误',1]
+		];
+		$dataChecker = t('dataChecker',$_POST, $checkRules);
+		$res = $dataChecker->check();
+		if(!$res)$this->out->e(201,$dataChecker->error);
+
+		$Ures = $this->__TokenCheck();
+		
+		if(!$Ures['agent'])$this->out->e(181);
+
+		$AGdb = db('agent');
+		$AGres = $AGdb->where('uid = ? and appid = ?',[$Ures['id'],$this->app['id']])->fetch();
+		if(!$AGres)$this->out->e(201,'代理信息不存在');
+		if($AGres['state'] != 'on')$this->out->e(180);
+
+		$page = isset($_POST['pg']) ? (intval($_POST['pg']) >= 1 ? intval($_POST['pg']):1) : 1;
+
+		$list = db('kami')->join("as K LEFT JOIN {$AGdb->pre}kami_group as KG on (K.kgid = KG.id) LEFT JOIN {$AGdb->pre}user as U on (K.use_uid=U.id)")->where('K.add_uid = ? and K.appid = ?',[$Ures['id'],$this->app['id']])->order('K.id desc')->page($page,10)->fetchAll("K.type,K.cardNo,K.note,K.use_time,K.add_time,K.state,KG.name as Gname,IFNULL(U.phone,IFNULL(U.email,IFNULL(U.acctno,null))) as use_user");
+		$this->out->setData($list)->e(200,'获取成功');
+	}
+
+	public function __agentSetCash(){//代理修改体现信息
+        $checkRules  = [
+			'token' => ['Jwt','','Token令牌有误'],
+			'name' => ['string','2,64','提现姓名有误'],
+			'account' => ['email,phone','5，32','提现账号有误'],
+			'way' => ['sameone','wx,ali','提现方式有误']
+		];
+		$dataChecker = t('dataChecker',$_POST, $checkRules);
+		$res = $dataChecker->check();
+		if(!$res)$this->out->e(201,$dataChecker->error);
+		
+		$Ures = $this->__TokenCheck();
+		
+		if(!$Ures['agent'])$this->out->e(181);
+		$AGdb = db('agent');
+		$AGres = $AGdb->where('uid = ? and appid = ?',[$Ures['id'],$this->app['id']])->fetch();
+		if(!$AGres)$this->out->e(201,'代理信息不存在');
+		if($AGres['state'] != 'on')$this->out->e(180);
+
+		$updata = ['cash_name'=>$_POST['name'],'cash_account'=>$_POST['account'],'cash_way'=>$_POST['way']];
+		$upRes = db('agent')->where('uid = ? and appid = ?',[$Ures['id'],$this->app['id']])->update($updata);
+		if(!$upRes){
+			$this->__log($Ures['id'],$this->m,201);
+			$this->out->e(201,"修改失败");
+		}
+		$this->__log($Ures['id'],$this->m);
+		$this->out->e(200,"修改成功");
+	}
+
+	public function __agentCash(){//代理提现
+        $checkRules  = [
+			'token' => ['Jwt','','Token令牌有误'],
+			'money' => ['money','1,10000','提现金额有误']
+		];
+		$dataChecker = t('dataChecker',$_POST, $checkRules);
+		$res = $dataChecker->check();
+		if(!$res)$this->out->e(201,$dataChecker->error);
+		
+		$Ures = $this->__TokenCheck();
+		
+		if(!$Ures['agent'])$this->out->e(181);
+		
+		$AGdb = db('agent');
+		$AGres = $AGdb->where('uid = ? and appid = ?',[$Ures['id'],$this->app['id']])->fetch();
+		if(!$AGres)$this->out->e(201,'代理信息不存在');
+		if($AGres['state'] != 'on')$this->out->e(180);
+
+		if($AGres['money']<$_POST['money'])$this->out->e(182);
+
+		$AGdb->beginTransaction();//开启事务
+        $deductRes = $AGdb->where('id = ?', [$AGres['id']])->field(['money'=>-$_POST['money']]);//扣除余额
+        $addID = db('agent_cash')->add(['agid'=>$AGres['id'],'name'=>$AGres['cash_name'],'account'=>$AGres['cash_account'],'way'=>$AGres['cash_way'],'money'=>$_POST['money'],'add_time'=>time(),'state'=>0,'appid'=>$this->app['id']]);
+        if($deductRes && $addID){//确保两个都执行成功
+            $AGdb->commit();//进行提交
+            $this->__log($Ures['id'],$this->m);
+			$this->out->e(200,"提现成功");
+        }else{
+            $AGdb->rollback();//回滚
+            $this->__log($Ures['id'],$this->m,201);
+			$this->out->e(201,"提现失败");
+        }
+	}
+
+	public function __agentGetCashLog(){//代理提现记录
+        $checkRules  = [
+			'token' => ['Jwt','','Token令牌有误'],
+			'pg' => ['int','1,11','页面有误',1]
+		];
+		$dataChecker = t('dataChecker',$_POST, $checkRules);
+		$res = $dataChecker->check();
+		if(!$res)$this->out->e(201,$dataChecker->error);
+		
+		$Ures = $this->__TokenCheck();
+		
+		if(!$Ures['agent'])$this->out->e(181);
+		
+		$AGdb = db('agent');
+		$AGres = $AGdb->where('uid = ? and appid = ?',[$Ures['id'],$this->app['id']])->fetch();
+		if(!$AGres)$this->out->e(201,'代理信息不存在');
+		if($AGres['state'] != 'on')$this->out->e(180);
+
+		$page = isset($_POST['pg']) ? (intval($_POST['pg']) >= 1 ? intval($_POST['pg']):1) : 1;
+		
+		$list = db('agent_cash')->where('agid = ?', [$AGres['id']])->page($page,10)->fetchAll("name,account,way,money,add_time,end_time,state,rebut_msg");
+		$this->out->setData($list)->e(200,'获取成功');
+	}
 	
 	public function __logon(){//登录
 		$checkRules  = [
